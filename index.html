@@ -10,15 +10,26 @@
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
 	<script type="module" src="works.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
+	<div id="modal-overlay"></div>
+	<div id="modal-edit">
+		<div class="gallery-modal">
+		</div>
+		<div class="form-add-project">
+		</div>
+		<button class="add-work">Ajouter une photo</button>
+	</div>
 <header>
 	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
 			<li>projets</li>
 			<li>contact</li>
-			<li>login</li>
+			<li><a class="login-button" href="login.html">login</a></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
@@ -36,7 +47,16 @@
 		</article>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets</h2>
+		<div class="projets">
+			<h2>Mes Projets</h2>
+			<div class="modifier">Modifier <i class="fa-regular fa-pen-to-square"></i></div>
+		</div>
+		<div class="button-filter">
+			<button class="filter-all">Tous</button>
+			<button class="filter-objects">Objects</button>
+			<button class="filter-appartements">Appartements</button>
+			<button class="filters-hotels">Hôtel & restaurants</button>
+		</div>
 		<div class="gallery">
 		</div>
 	</section>

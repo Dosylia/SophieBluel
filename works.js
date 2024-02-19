@@ -1,21 +1,60 @@
-let works = window.localStorage.getItem("works");
-if (works === null) {
-    const reponse = await fetch('http://localhost:5678/api/works');
-    const works = await reponse.json();
+let token = window.localStorage.getItem("userToken");
+let categories = window.localStorage.getItem("categories");
 
-    // Transformation des pièces en JSON
-    const valeurWorks = JSON.stringify(works);
-    
-    // Stockage des informations dans le localStorage
-    window.localStorage.setItem("works", valeurWorks);
-} else {
-    works = JSON.parse(works);
+// Génération des images pour la modal
+function genererWorksModal(works) {
+    const divWorksModal = document.querySelector(".gallery-modal");
+    const addButon = document.querySelector(".add-work");
+    divWorksModal.innerHTML = "";
+    divWorksModal.style.display = "flex";
+    addButon.style.display = "block";
+
+    const iconClose = document.createElement("i");
+    iconClose.classList.add("fas", "fa-xmark", "close-modal");
+    iconClose.addEventListener("click", function() {
+        const modalEdit = document.querySelector("#modal-edit");
+        modalEdit.style.visibility = "hidden";
+        document.body.classList.remove('modal-open');
+    });
+
+    const titleGallery = document.createElement("h3");
+    titleGallery.innerText = "Gallerie Photo";
+
+    divWorksModal.appendChild(titleGallery);
+    divWorksModal.appendChild(iconClose);
+
+    const worksContainerModal = document.createElement("div");
+    worksContainerModal.classList.add("works-container");
+
+    divWorksModal.appendChild(worksContainerModal);
+
+    for (let i = 0; i < works.length; i++) {
+        const figureModal = works[i];
+
+        const workElementModal = document.createElement("div");
+        workElementModal.dataset.id = works[i].id;
+
+        const imageElementModal = document.createElement("img");
+        imageElementModal.src = figureModal.imageUrl;
+
+        const deleteIcon = document.createElement("button");
+        deleteIcon.type = "button";
+        deleteIcon.classList.add("fas", "fa-trash-can", "delete-icon");
+        deleteIcon.addEventListener("click", function(event) {
+            event.preventDefault();
+            deleteWork(works[i].id);
+        });
+
+        worksContainerModal.appendChild(workElementModal);
+        workElementModal.appendChild(imageElementModal);
+        workElementModal.appendChild(deleteIcon);
+    }
 }
 
+
+// Génération des images pour la page normale du site web
 function genererWorks(works)
 {
-
-    works.sort((a, b) => a.category.id - b.category.id);
 
     for (let i = 0; i < works.length; i++)
     {
@@ -38,5 +77,275 @@ function genererWorks(works)
     }
 }
 
-genererWorks(works);
+// Envoie du formulaire à l'API
+function submitForm() 
+{
+    const file = document.querySelector('#picture').files[0];
+    const title = document.querySelector('#title').value;
+    const category = document.querySelector('#category').value;
+
+    let formData = new FormData();
+    formData.append("image", file);
+    formData.append("title", title);
+    formData.append("category", category);
+
+
+    fetch('http://localhost:5678/api/works', {
+        method: "POST",
+        headers: {'Authorization': `Bearer ${token}`},
+        body : formData
+    }).then(response => {
+        if (response.status === 201) {
+            return response.json();
+        } else if (response.status === 400){
+            throw new Error ("Requête incorrecte");
+        } else if (response.status === 401){
+            throw new Error ("Non authorisé");
+        } else {
+            throw new Error ("Erreur innatendu");
+        }
+    }).then(data => {
+        console.log(data);
+        updateGallery();
+    });
+}
+
+// Suppression d'une image
+function deleteWork(idWork) {
+    fetch(`http://localhost:5678/api/works/${idWork}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+        }
+        console.log('Élément supprimé avec succès.');
+
+        return fetch('http://localhost:5678/api/works');
+    })
+    .then(response => response.json())
+    .then(updatedWorks => {
+        window.localStorage.setItem("works", JSON.stringify(updatedWorks));
+        updateGallery();
+    })
+    .catch(error => {
+        console.error('Erreur lors de la suppression de l\'élément:', error);
+    });
+}
+
+// Mise à jour des images
+function updateGallery() {
+    // Récupérez les travaux depuis le stockage local ou faites une nouvelle requête API
+    const storedWorks = window.localStorage.getItem("works");
+
+    if (storedWorks !== null) {
+        const works = JSON.parse(storedWorks);
+        const divWorks = document.querySelector(".gallery");
+        divWorks.innerHTML = "";  // Vide la galerie
+
+        // Générez les travaux dans la galerie
+        genererWorks(works);
+    }
+}
+
+
+
+document.addEventListener("DOMContentLoaded", async function() {
+
+    //Récupération des données de l'API
+    const reponse = await fetch('http://localhost:5678/api/works');
+    const works = await reponse.json();
+
+    genererWorks(works);
+
+    // Options pour filter de la galerie
+    const filterAll = document.querySelector(".filter-all")
+    const filterObjects = document.querySelector(".filter-objects")
+    const filterAppartements = document.querySelector(".filter-appartements")
+    const filterHotels = document.querySelector(".filters-hotels")
+
+    filterAll.addEventListener("click", function () {
+        document.querySelector(".gallery").innerHTML = "";   
+        genererWorks(works);   
+
+    });
+
+    filterObjects.addEventListener("click", function () {
+        const objectsOnly = works.filter(function (works) {
+            return works.category.id === 1;
+        });
+        document.querySelector(".gallery").innerHTML = "";   
+        genererWorks(objectsOnly);   
+    });
+
+    filterAppartements.addEventListener("click", function () {
+        const appartementsOnly = works.filter(function (works) {
+            return works.category.id === 2;
+        });
+        document.querySelector(".gallery").innerHTML = "";   
+        genererWorks(appartementsOnly);   
+    });
+
+    filterHotels.addEventListener("click", function () {
+        const hotelOnly = works.filter(function (works) {
+            return works.category.id === 3;
+        });
+        document.querySelector(".gallery").innerHTML = "";   
+        genererWorks(hotelOnly);   
+    });
+
+
+    // Si le token n'est pas null dans le local storage, accès à l'édition des projets
+    if (token !== null) {
+
+        // Changer le bouton log in en log out, et effacer le token si log out
+        const loginBtn = document.querySelector('.login-button');
+        loginBtn.innerHTML = "logout"
+
+        loginBtn.addEventListener("click", function() {
+            localStorage.removeItem('userToken');
+        });
+
+
+        const buttonModifier = document.querySelector('.modifier');
+        buttonModifier.style.display = "block";
+
+        buttonModifier.addEventListener("click", async function(event) {
+            event.preventDefault()
+            const modalEdit = document.querySelector("#modal-edit");
+            modalEdit.style.visibility = "visible";
+            document.body.classList.add('modal-open');
+
+            const response = await fetch('http://localhost:5678/api/works');
+            const worksData = await response.json();
+
+            window.localStorage.setItem("works", JSON.stringify(worksData));
+
+            genererWorksModal(worksData);
+
+        });
+
+        if (categories === null) {
+            const responseCategory = await fetch('http://localhost:5678/api/categories');
+            const categories = await responseCategory.json();
+        
+            // Transformation des pièces en JSON
+            const valeurCategories = JSON.stringify(categories);
+            
+            // Stockage des informations dans le localStorage
+            window.localStorage.setItem("categories", valeurCategories);
+        } else {
+            categories = JSON.parse(categories);
+        }
+
+        // Bouton pour ajouter des projets
+        const addButon = document.querySelector(".add-work");
+
+
+        // Event bouton pour ajouter des projets
+        addButon.addEventListener("click", function() {
+            const editModal= document.querySelector("#modal-edit");
+            const divWorksModal = document.querySelector(".gallery-modal");
+            const formAddProjectDiv = document.querySelector(".form-add-project");
+            formAddProjectDiv.innerHTML = "";
+            divWorksModal.style.display= "none";
+            addButon.style.display = "none";
+
+
+            // Icon pour le retour en arrière
+            const iconBack = document.createElement("i");
+            iconBack.classList.add("fas", "fa-arrow-left", "modal-back");
+            iconBack.addEventListener("click", function() {
+                formAddProjectDiv.style.display = "none";
+                divWorksModal.style.display = "flex";
+                addButon.style.display = "block";
+                iconBack.style.display = "none";
+
+            });
+
+            // Icon pour quitter le modal
+            const iconClose = document.createElement("i");
+                iconClose.classList.add("fas", "fa-xmark", "close-modal")
+                iconClose.addEventListener("click", function() {
+                    const modalEdit = document.querySelector("#modal-edit");
+                    modalEdit.style.visibility = "hidden";
+                    document.body.classList.remove('modal-open');
+                    divWorksModal.visibility = "hidden";
+                    formAddProjectDiv.style.display = "none";
+                });
+
+
+            editModal.appendChild(iconClose);
+            editModal.appendChild(iconBack);
+
+            formAddProjectDiv.style.display = "flex";
+ 
+            // Formulaire entier pour ajouter des photos
+            formAddProjectDiv.innerHTML = `
+            <h3>Ajout photo</h3>
+            <div class="content-picture">
+                <i class="fa-regular fa-image picture-user" id="picturePreview"></i>
+                <button class="add-photo">+ Ajouter une photo</button>
+                <p class="file-info">jpg, png : 4mo max</p>
+                <input type="file" accept="images/png, image/jpeg, image/jpg" id="picture" name="picture" style="display:none;">
+            </div>
+        
+            <form action="">
+                <label for="title">Titre</label>
+                <input type="text" id="title" name="title">
+        
+                <label for="category">Catégorie</label>
+                <select name="category" id="category">
+                    ${generateCategoryOptions(categories)}
+                </select>
+        
+                <button type="button" name="submit" id="Submit">Valider</button>
+            </form>
+            `;
+
+            const buttonForm = document.querySelector("#Submit");
+            const btnAddPicture = document.querySelector(".add-photo");
+            const file = document.querySelector('#picture');
+            const picturePreview = document.getElementById('picturePreview');
+
+            buttonForm.addEventListener("click", submitForm);
+
+            btnAddPicture.addEventListener("click", function() {
+                file.click();
+            });
+
+            file.addEventListener('change', function() {
+                // Vérifiez si un fichier a été sélectionné
+                if (file.files.length > 0) {
+                    const reader = new FileReader();
+            
+                    // Mettez à jour la source de l'icône avec la prévisualisation de l'image
+                    reader.onload = function(e) {
+                        picturePreview.style.backgroundImage = `url('${e.target.result}')`;
+                        picturePreview.classList.remove('fa-image'); // Supprimez la classe de l'icône fa-image
+            
+                        // Cacher le bouton "Ajouter une photo" et le texte "jpg, png : 4 mo max"
+                        btnAddPicture.style.display = 'none';
+                        document.querySelector('.file-info').style.display = 'none';
+                    };
+            
+                    // Lisez le fichier en tant que Data URL
+                    reader.readAsDataURL(file.files[0]);
+                }
+            });
+
+            //Création des catégories dynamiquement
+            function generateCategoryOptions(categories) 
+            {
+            return categories.map(category => `<option value="${category.id}">${category.name}</option>`).join('');
+            }
+
+        
+        });
+    }
+});
 

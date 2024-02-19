@@ -1,9 +1,12 @@
+let token = window.localStorage.getItem("userToken");
 const formulaireLogin = document.querySelector(".formulaire-login");
 const errorMessageElement = document.getElementById("error-message");
 
+// Quand le formulaire est submit
 formulaireLogin.addEventListener("submit", async function (event){
     event.preventDefault();
 
+    // Récupérer les informations via le formulaire
     const user = {
         email: event.target.querySelector("[name=email").value,
         password: event.target.querySelector("[name=password").value,
@@ -11,6 +14,7 @@ formulaireLogin.addEventListener("submit", async function (event){
 
     const chargeUtile = JSON.stringify(user);
 
+    // Envoie à l'api des données du fomulaire
     try {
         const response = await fetch("http://localhost:5678/api/users/login", {
             method: "POST",
@@ -24,6 +28,7 @@ formulaireLogin.addEventListener("submit", async function (event){
 
         let data;
 
+        // Réception des réponses, 200 = connecté
         if (response.status === 200) {
             data = await response.json();
             console.log("Connected", data);
@@ -44,7 +49,27 @@ formulaireLogin.addEventListener("submit", async function (event){
     }
 });
 
-function showError(message) {
+// Montrer les erreurs
+function showError(message) 
+{
     errorMessageElement.innerText = message;
     errorMessageElement.style.color = "red";
+}
+
+//Changement du bouton login 
+
+if (token !== null) 
+{
+
+    // Changer le bouton log in en log out, et effacer le token si log out
+    const loginBtn = document.querySelector('.login-button');
+    loginBtn.innerHTML = "logout"
+
+    loginBtn.addEventListener("click", function() {
+        localStorage.removeItem('userToken');
+    });
+
+    //Changer le formulaire
+    const sectionLogin = document.querySelector('.login');
+    sectionLogin.innerHTML = "<p>Vous êtes déjà connecté</p>"
 }
