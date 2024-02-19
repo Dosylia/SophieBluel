@@ -277,16 +277,16 @@ footer nav ul {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 60%; /* Ajustez la largeur selon vos besoins */
-    max-width: 800px; /* Ajoutez une largeur maximale si nécessaire */
+    width: 60%;
+    max-width: 800px;
     height: fit-content;
     min-height: fit-content;
     background-color: white;
     text-align: center;
     z-index: 1000;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    padding: 20px; /* Ajoutez de la marge intérieure pour créer une bordure autour de la modal */
-    border: 2px solid #ccc; /* Ajoutez une bordure */
+    padding: 20px;
+    border: 2px solid #ccc;
 }
 
 .modal-overlay {
@@ -336,11 +336,11 @@ footer nav ul {
     width: 100%;
     height: 100px;
     margin: auto;
-    margin-bottom: 10px; /* Ajoutez une marge en bas entre les images */
+    margin-bottom: 10px;
 }
 
 #modal-edit p {
-    margin: 20px 0; /* Ajustez la marge pour le paragraphe */
+    margin: 20px 0;
 }
 
 .delete-icon {
@@ -349,12 +349,11 @@ footer nav ul {
     position: absolute;
 	background-color: black;
 	border: none;
-    top: 10px; /* Ajustez la position verticale */
-    right: 10px; /* Ajustez la position horizontale pour placer l'icône en haut à droite */
-    z-index: 1; /* Assurez-vous que l'icône est au-dessus de l'image */
+    top: 10px;
+    right: 10px;
+    z-index: 1;
 	width: 20px;
     height: 20px;
-    /* Ajustez la taille de la police de l'icône */
     font-size: 10px;
 }
 
@@ -362,9 +361,9 @@ footer nav ul {
 .close-modal {
 	cursor: pointer;
 	position: absolute;
-    top: 10px; /* Ajustez la position verticale */
-    right: 10px; /* Ajustez la position horizontale pour placer l'icône en haut à droite */
-    z-index: 1; /* Assurez-vous que l'icône est au-dessus de l'image */
+    top: 10px;
+    right: 10px;
+    z-index: 1;
 }
 
 .add-work
@@ -411,9 +410,9 @@ footer nav ul {
 {
 	cursor: pointer;
 	position: absolute;
-    top: 10px; /* Ajustez la position verticale */
-    left: 10px; /* Ajustez la position horizontale pour placer l'icône en haut à droite */
-    z-index: 1; /* Assurez-vous que l'icône est au-dessus de l'image */	
+    top: 10px;
+    left: 10px;
+    z-index: 1;
 }
 
 .form-add-project form
@@ -433,9 +432,9 @@ footer nav ul {
 }
 
 .picture-user {
-    width: 100px; /* Ajoutez la largeur et la hauteur souhaitées */
+    width: 100px;
     height: 100px;
-    background-size: cover; /* Ajustez la taille en fonction de vos besoins */
+    background-size: cover;
 }
 
 .form-add-project form input 
