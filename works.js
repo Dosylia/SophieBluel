@@ -1,10 +1,15 @@
+// Récupération données local storage
 let token = window.localStorage.getItem("userToken");
 let categories = window.localStorage.getItem("categories");
 
+// Récupération dans le DOM
+const modalEdit = document.querySelector("#modal-edit");
+const divWorksModal = document.querySelector(".gallery-modal");
+const formAddProjectDiv = document.querySelector(".form-add-project");
+const addButon = document.querySelector(".add-work");
+
 // Génération des images pour la modal
 function genererWorksModal(works) {
-    const divWorksModal = document.querySelector(".gallery-modal");
-    const addButon = document.querySelector(".add-work");
     divWorksModal.innerHTML = "";
     divWorksModal.style.display = "flex";
     addButon.style.display = "block";
@@ -12,7 +17,6 @@ function genererWorksModal(works) {
     const iconClose = document.createElement("i");
     iconClose.classList.add("fas", "fa-xmark", "close-modal");
     iconClose.addEventListener("click", function() {
-        const modalEdit = document.querySelector("#modal-edit");
         modalEdit.style.visibility = "hidden";
         document.body.classList.remove('modal-open');
     });
@@ -216,7 +220,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         buttonModifier.addEventListener("click", async function(event) {
             event.preventDefault()
-            const modalEdit = document.querySelector("#modal-edit");
             modalEdit.style.visibility = "visible";
             document.body.classList.add('modal-open');
 
@@ -242,15 +245,9 @@ document.addEventListener("DOMContentLoaded", async function() {
             categories = JSON.parse(categories);
         }
 
-        // Bouton pour ajouter des projets
-        const addButon = document.querySelector(".add-work");
-
 
         // Event bouton pour ajouter des projets
         addButon.addEventListener("click", function() {
-            const editModal= document.querySelector("#modal-edit");
-            const divWorksModal = document.querySelector(".gallery-modal");
-            const formAddProjectDiv = document.querySelector(".form-add-project");
             formAddProjectDiv.innerHTML = "";
             divWorksModal.style.display= "none";
             addButon.style.display = "none";
@@ -271,7 +268,6 @@ document.addEventListener("DOMContentLoaded", async function() {
             const iconClose = document.createElement("i");
                 iconClose.classList.add("fas", "fa-xmark", "close-modal")
                 iconClose.addEventListener("click", function() {
-                    const modalEdit = document.querySelector("#modal-edit");
                     modalEdit.style.visibility = "hidden";
                     document.body.classList.remove('modal-open');
                     divWorksModal.visibility = "hidden";
@@ -279,8 +275,8 @@ document.addEventListener("DOMContentLoaded", async function() {
                 });
 
 
-            editModal.appendChild(iconClose);
-            editModal.appendChild(iconBack);
+            modalEdit.appendChild(iconClose);
+            modalEdit.appendChild(iconBack);
 
             formAddProjectDiv.style.display = "flex";
  
