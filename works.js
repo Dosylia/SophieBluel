@@ -298,6 +298,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 <select name="category" id="category">
                     ${generateCategoryOptions(categories)}
                 </select>
+                <hr class="separator">
         
                 <button type="button" name="submit" id="Submit">Valider</button>
             </form>
