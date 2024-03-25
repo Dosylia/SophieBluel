@@ -9,7 +9,7 @@ const formAddProjectDiv = document.querySelector(".form-add-project");
 const addButon = document.querySelector(".add-work");
 
 // Génération des images pour la modal
-function genererWorksModal(works) {
+function generateWorksModal(works) {
     divWorksModal.innerHTML = "";
     divWorksModal.style.display = "flex";
     addButon.style.display = "block";
@@ -57,7 +57,7 @@ function genererWorksModal(works) {
 
 
 // Génération des images pour la page normale du site web
-function genererWorks(works)
+function generateWorks(works)
 {
 
     for (let i = 0; i < works.length; i++)
@@ -184,7 +184,7 @@ function updateGallery() {
         divWorks.innerHTML = "";  // Vide la galerie
 
         // Générez les travaux dans la galerie
-        genererWorks(works);
+        generateWorks(works);
     }
 }
 
@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     const reponse = await fetch('http://localhost:5678/api/works');
     const works = await reponse.json();
 
-    genererWorks(works);
+    generateWorks(works);
 
     // Options pour filter de la galerie
     const filterAll = document.querySelector(".filter-all")
@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     filterAll.addEventListener("click", function () {
         document.querySelector(".gallery").innerHTML = "";   
-        genererWorks(works);   
+        generateWorks(works);   
 
     });
 
@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             return works.category.id === 1;
         });
         document.querySelector(".gallery").innerHTML = "";   
-        genererWorks(objectsOnly);   
+        generateWorks(objectsOnly);   
     });
 
     filterAppartements.addEventListener("click", function () {
@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             return works.category.id === 2;
         });
         document.querySelector(".gallery").innerHTML = "";   
-        genererWorks(appartementsOnly);   
+        generateWorks(appartementsOnly);   
     });
 
     filterHotels.addEventListener("click", function () {
@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             return works.category.id === 3;
         });
         document.querySelector(".gallery").innerHTML = "";   
-        genererWorks(hotelOnly);   
+        generateWorks(hotelOnly);   
     });
 
 
@@ -260,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
             window.localStorage.setItem("works", JSON.stringify(worksData));
 
-            genererWorksModal(worksData);
+            generateWorksModal(worksData);
 
         });
 
