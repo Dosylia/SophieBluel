@@ -1,3 +1,6 @@
+// URL de base pour l'api
+const baseUrl = "http://localhost:5678/api/"
+
 // Récupération données local storage
 let token = window.localStorage.getItem("userToken");
 let categories = window.localStorage.getItem("categories");
@@ -123,7 +126,7 @@ function submitForm()
         formData.append("category", category);
 
 
-        fetch('http://localhost:5678/api/works', {
+        fetch(`${baseUrl}works`, {
             method: "POST",
             headers: {'Authorization': `Bearer ${token}`},
             body : formData
@@ -148,7 +151,7 @@ function submitForm()
 
 // Suppression d'une image
 function deleteWork(idWork) {
-    fetch(`http://localhost:5678/api/works/${idWork}`, {
+    fetch(`${baseUrl}works/${idWork}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -161,7 +164,7 @@ function deleteWork(idWork) {
         }
         console.log('Élément supprimé avec succès.');
 
-        return fetch('http://localhost:5678/api/works');
+        return fetch(`${baseUrl}works`);
     })
     .then(response => response.json())
     .then(updatedWorks => {
@@ -193,7 +196,7 @@ function updateGallery() {
 document.addEventListener("DOMContentLoaded", async function() {
 
     //Récupération des données de l'API
-    const reponse = await fetch('http://localhost:5678/api/works');
+    const reponse = await fetch(`${baseUrl}works`);
     const works = await reponse.json();
 
     generateWorks(works);
@@ -255,7 +258,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             modalEdit.style.visibility = "visible";
             document.body.classList.add('modal-open');
 
-            const response = await fetch('http://localhost:5678/api/works');
+            const response = await fetch(`${baseUrl}works`);
             const worksData = await response.json();
 
             window.localStorage.setItem("works", JSON.stringify(worksData));
@@ -265,7 +268,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
 
         if (categories === null) {
-            const responseCategory = await fetch('http://localhost:5678/api/categories');
+            const responseCategory = await fetch(`${baseUrl}categories`);
             const categories = await responseCategory.json();
         
             // Transformation des pièces en JSON
