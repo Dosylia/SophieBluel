@@ -110,6 +110,8 @@ function submitForm()
     const file = document.querySelector('#picture').files[0];
     const title = document.querySelector('#title').value;
     const category = document.querySelector('#category').value;
+    const errorMessageElement = document.getElementById("error-message");
+    errorMessageElement.innerHTML = "";
 
     checkFormData(title, category) // Test si les champs ne sont pas vides
 
@@ -129,9 +131,9 @@ function submitForm()
             if (response.status === 201) {
                 return response.json();
             } else if (response.status === 400){
-                throw new Error ("Requête incorrecte");
+                throw new Error ("400 - Requête incorrecte");
             } else if (response.status === 401){
-                throw new Error ("Non authorisé");
+                throw new Error ("401 - Non authorisé");
             } else {
                 throw new Error ("Erreur innatendu");
             }
