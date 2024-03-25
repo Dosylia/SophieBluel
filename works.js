@@ -81,6 +81,29 @@ function genererWorks(works)
     }
 }
 
+function checkFormData(title, category) 
+{
+    if (!title)
+    {
+        return "Le champ 'Titre' est manquant.";
+    } 
+    else if (!category)
+    {
+        return "Le champ 'Catégorie' est manquant.";
+    }
+    else
+    {
+        return true;
+    }
+}
+
+function showError(error) // Function pour envoyer les erreurs si le formulaire n'est pas complet
+{
+    const errorMessageElement = document.getElementById("error-message");
+    errorMessageElement.innerText = error;
+    errorMessageElement.style.color = "red";
+}
+
 // Envoie du formulaire à l'API
 function submitForm() 
 {
@@ -88,30 +111,37 @@ function submitForm()
     const title = document.querySelector('#title').value;
     const category = document.querySelector('#category').value;
 
-    let formData = new FormData();
-    formData.append("image", file);
-    formData.append("title", title);
-    formData.append("category", category);
+    checkFormData(title, category) // Test si les champs ne sont pas vides
+
+    const formDataIsValid = checkFormData(title, category); 
+    if (formDataIsValid === true) { // true = champs remplies, le formulaire envoyé
+        let formData = new FormData();
+        formData.append("image", file);
+        formData.append("title", title);
+        formData.append("category", category);
 
 
-    fetch('http://localhost:5678/api/works', {
-        method: "POST",
-        headers: {'Authorization': `Bearer ${token}`},
-        body : formData
-    }).then(response => {
-        if (response.status === 201) {
-            return response.json();
-        } else if (response.status === 400){
-            throw new Error ("Requête incorrecte");
-        } else if (response.status === 401){
-            throw new Error ("Non authorisé");
+        fetch('http://localhost:5678/api/works', {
+            method: "POST",
+            headers: {'Authorization': `Bearer ${token}`},
+            body : formData
+        }).then(response => {
+            if (response.status === 201) {
+                return response.json();
+            } else if (response.status === 400){
+                throw new Error ("Requête incorrecte");
+            } else if (response.status === 401){
+                throw new Error ("Non authorisé");
+            } else {
+                throw new Error ("Erreur innatendu");
+            }
+        }).then(data => {
+            console.log(data);
+            updateGallery();
+        });
         } else {
-            throw new Error ("Erreur innatendu");
+            showError(formDataIsValid);
         }
-    }).then(data => {
-        console.log(data);
-        updateGallery();
-    });
 }
 
 // Suppression d'une image
@@ -296,8 +326,10 @@ document.addEventListener("DOMContentLoaded", async function() {
         
                 <label for="category">Catégorie</label>
                 <select name="category" id="category">
+                    <option value="" disabled selected style="display:none;"></option>
                     ${generateCategoryOptions(categories)}
                 </select>
+                <span id="error-message"></span>
                 <hr class="separator">
         
                 <button type="button" name="submit" id="Submit">Valider</button>
@@ -309,7 +341,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             const file = document.querySelector('#picture');
             const picturePreview = document.getElementById('picturePreview');
 
-            buttonForm.addEventListener("click", submitForm);
+            buttonForm.disabled = true;
 
             btnAddPicture.addEventListener("click", function() {
                 file.click();
@@ -332,8 +364,12 @@ document.addEventListener("DOMContentLoaded", async function() {
             
                     // Lisez le fichier en tant que Data URL
                     reader.readAsDataURL(file.files[0]);
+                    buttonForm.disabled = false;
+                    buttonForm.style.backgroundColor = "#1D6154";
                 }
             });
+
+            buttonForm.addEventListener("click", submitForm);
 
             //Création des catégories dynamiquement
             function generateCategoryOptions(categories) 
