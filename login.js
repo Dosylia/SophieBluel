@@ -1,3 +1,6 @@
+// URL de base pour l'api
+const baseUrl = "http://localhost:5678/api/"
+
 let token = window.localStorage.getItem("userToken");
 const formulaireLogin = document.querySelector(".formulaire-login");
 const errorMessageElement = document.getElementById("error-message");
@@ -16,7 +19,7 @@ formulaireLogin.addEventListener("submit", async function (event){
 
     // Envoie à l'api des données du fomulaire
     try {
-        const response = await fetch("http://localhost:5678/api/users/login", {
+        const response = await fetch(`${baseUrl}users/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: chargeUtile
