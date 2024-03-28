@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
 
 
-    // Si le token n'est pas null dans le local storage, accès à l'édition des projets
+    // Si le token n'est pas null dans le local storage, changer log in en log out
     if (token !== null) {
 
         // Changer le bouton log in en log out, et effacer le token si log out
@@ -249,9 +249,9 @@ document.addEventListener("DOMContentLoaded", async function() {
             localStorage.removeItem('userToken');
         });
 
-
+    
         const buttonModifier = document.querySelector('.modifier');
-        buttonModifier.style.display = "block";
+        buttonModifier.style.display = "block"; //On montrer le bouton modifier si token
 
         buttonModifier.addEventListener("click", async function(event) {
             event.preventDefault()
@@ -346,6 +346,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             const file = document.querySelector('#picture');
             const picturePreview = document.getElementById('picturePreview');
 
+            // Bloquer utilisation du bouton Submit tant que l'image n'est pas ajoutée
             buttonForm.disabled = true;
 
             btnAddPicture.addEventListener("click", function() {
@@ -369,6 +370,8 @@ document.addEventListener("DOMContentLoaded", async function() {
             
                     // Lisez le fichier en tant que Data URL
                     reader.readAsDataURL(file.files[0]);
+
+                    // Réactiver le bouton et le mettre en vert
                     buttonForm.disabled = false;
                     buttonForm.style.backgroundColor = "#1D6154";
                 }
