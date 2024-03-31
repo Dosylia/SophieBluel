@@ -9,6 +9,7 @@ let categories = window.localStorage.getItem("categories");
 const modalEdit = document.querySelector("#modal-edit");
 const divWorksModal = document.querySelector(".gallery-modal");
 const formAddProjectDiv = document.querySelector(".form-add-project");
+const initialState = formAddProjectDiv.innerHTML;
 const addButon = document.querySelector(".add-work");
 
 // Génération des images pour la modal
@@ -255,6 +256,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         buttonModifier.addEventListener("click", async function(event) {
             event.preventDefault()
+            formAddProjectDiv.style.display = "none";
             modalEdit.style.visibility = "visible";
             document.body.classList.add('modal-open');
 
@@ -283,10 +285,9 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         // Event bouton pour ajouter des projets
         addButon.addEventListener("click", function() {
-            formAddProjectDiv.innerHTML = "";
+            formAddProjectDiv.innerHTML = initialState;
             divWorksModal.style.display= "none";
             addButon.style.display = "none";
-
 
             // Icon pour le retour en arrière
             const iconBack = document.createElement("i");
@@ -314,32 +315,11 @@ document.addEventListener("DOMContentLoaded", async function() {
             modalEdit.appendChild(iconBack);
 
             formAddProjectDiv.style.display = "flex";
- 
-            // Formulaire entier pour ajouter des photos
-            formAddProjectDiv.innerHTML = `
-            <h3>Ajout photo</h3>
-            <div class="content-picture">
-                <i class="fa-regular fa-image picture-user" id="picturePreview"></i>
-                <button class="add-photo">+ Ajouter une photo</button>
-                <p class="file-info">jpg, png : 4mo max</p>
-                <input type="file" accept="images/png, image/jpeg, image/jpg" id="picture" name="picture" style="display:none;">
-            </div>
-        
-            <form action="">
-                <label for="title">Titre</label>
-                <input type="text" id="title" name="title">
-        
-                <label for="category">Catégorie</label>
-                <select name="category" id="category">
-                    <option value="" disabled selected style="display:none;"></option>
-                    ${generateCategoryOptions(categories)}
-                </select>
-                <span id="error-message"></span>
-                <hr class="separator">
-        
-                <button type="button" name="submit" id="Submit">Valider</button>
-            </form>
-            `;
+
+            //Ajouter les catégories dynamiquement
+            const selectCategory = document.querySelector("#category");
+            selectCategory.innerHTML += generateCategoryOptions(categories);
+            
 
             const buttonForm = document.querySelector("#Submit");
             const btnAddPicture = document.querySelector(".add-photo");
