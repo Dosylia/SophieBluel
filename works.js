@@ -11,6 +11,8 @@ const divWorksModal = document.querySelector(".gallery-modal");
 const formAddProjectDiv = document.querySelector(".form-add-project");
 const initialState = formAddProjectDiv.innerHTML;
 const addButon = document.querySelector(".add-work");
+const divButtonsFilter = document.querySelector(".button-filter");
+const divWorks = document.querySelector(".gallery");
 
 // Génération des images pour la modal
 function generateWorksModal(works) {
@@ -68,8 +70,6 @@ function generateWorks(works)
     {
         const figure = works[i];
 
-        // Récupération de l'élément du DOM qui accueillera les travaux de l'architecte
-        const divWorks = document.querySelector(".gallery");
         // Balise pour chaque travail
         const workElement = document.createElement("figure");
         workElement.dataset.id = works[i].id;
@@ -82,6 +82,28 @@ function generateWorks(works)
         divWorks.appendChild(workElement);
         workElement.appendChild(imageElement);
         workElement.appendChild(captionElement)
+    }
+}
+
+function generateButtonCategories(categories) 
+{
+
+    const buttonFilterAll = document.createElement("button");
+    buttonFilterAll.classList.add("filter-all");
+    buttonFilterAll.innerText = "Tous";
+
+    divButtonsFilter.appendChild(buttonFilterAll);
+
+    for(let i = 0; i < categories.length; i++) 
+    {
+        const name = categories[i].name.split(' ')[0]; //Ne garder que le premier mots
+
+        const button = document.createElement("button");
+        button.dataset.id = categories[i].id;
+        button.classList.add(`filter-${name}`)
+        button.innerText = categories[i].name;
+
+        divButtonsFilter.appendChild(button);
     }
 }
 
@@ -143,6 +165,9 @@ function submitForm()
             }
         }).then(data => {
             console.log(data);
+            document.body.classList.remove('modal-open');
+            modalEdit.style.visibility = "hidden";
+            divWorks.innerHTML = "";
             updateGallery();
         });
         } else {
@@ -170,6 +195,8 @@ function deleteWork(idWork) {
     .then(response => response.json())
     .then(updatedWorks => {
         window.localStorage.setItem("works", JSON.stringify(updatedWorks));
+        divWorks.innerHTML = "";
+        updateGalleryModal();
         updateGallery();
     })
     .catch(error => {
@@ -178,18 +205,21 @@ function deleteWork(idWork) {
 }
 
 // Mise à jour des images
-function updateGallery() {
-    // Récupérez les travaux depuis le stockage local ou faites une nouvelle requête API
-    const storedWorks = window.localStorage.getItem("works");
+async function updateGallery() {
 
-    if (storedWorks !== null) {
-        const works = JSON.parse(storedWorks);
-        const divWorks = document.querySelector(".gallery");
-        divWorks.innerHTML = "";  // Vide la galerie
+    const reponse = await fetch(`${baseUrl}works`);
+    const works = await reponse.json();
 
-        // Générez les travaux dans la galerie
-        generateWorks(works);
-    }
+    generateWorks(works);
+}
+
+// Mise à jour des images
+async function updateGalleryModal() {
+
+    const reponse = await fetch(`${baseUrl}works`);
+    const works = await reponse.json();
+
+    generateWorksModal(works)
 }
 
 
@@ -202,14 +232,29 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     generateWorks(works);
 
+    if (categories === null) {
+        const responseCategory = await fetch(`${baseUrl}categories`);
+        categories = await responseCategory.json();
+    
+        // Transformation des pièces en JSON
+        const valeurCategories = JSON.stringify(categories);
+        
+        // Stockage des informations dans le localStorage
+        window.localStorage.setItem("categories", valeurCategories);
+    } else {
+        categories = JSON.parse(categories);
+    }
+
+    generateButtonCategories(categories);
+
     // Options pour filter de la galerie
     const filterAll = document.querySelector(".filter-all")
-    const filterObjects = document.querySelector(".filter-objects")
-    const filterAppartements = document.querySelector(".filter-appartements")
-    const filterHotels = document.querySelector(".filters-hotels")
+    const filterObjects = document.querySelector(".filter-Objets")
+    const filterAppartements = document.querySelector(".filter-Appartements")
+    const filterHotels = document.querySelector(".filter-Hotels")
 
     filterAll.addEventListener("click", function () {
-        document.querySelector(".gallery").innerHTML = "";   
+        divWorks.innerHTML = ""; 
         generateWorks(works);   
 
     });
@@ -218,7 +263,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const objectsOnly = works.filter(function (works) {
             return works.category.id === 1; // Categorie = Objets
         });
-        document.querySelector(".gallery").innerHTML = "";   
+        divWorks.innerHTML = "";  
         generateWorks(objectsOnly);   
     });
 
@@ -226,7 +271,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const appartementsOnly = works.filter(function (works) {
             return works.category.id === 2; // Categorie = Appartements
         });
-        document.querySelector(".gallery").innerHTML = "";   
+        divWorks.innerHTML = "";   
         generateWorks(appartementsOnly);   
     });
 
@@ -234,7 +279,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const hotelOnly = works.filter(function (works) {
             return works.category.id === 3; // Categorie = Hôtels
         });
-        document.querySelector(".gallery").innerHTML = "";   
+        divWorks.innerHTML = "";   
         generateWorks(hotelOnly);   
     });
 
@@ -268,19 +313,6 @@ document.addEventListener("DOMContentLoaded", async function() {
             generateWorksModal(worksData);
 
         });
-
-        if (categories === null) {
-            const responseCategory = await fetch(`${baseUrl}categories`);
-            const categories = await responseCategory.json();
-        
-            // Transformation des pièces en JSON
-            const valeurCategories = JSON.stringify(categories);
-            
-            // Stockage des informations dans le localStorage
-            window.localStorage.setItem("categories", valeurCategories);
-        } else {
-            categories = JSON.parse(categories);
-        }
 
 
         // Event bouton pour ajouter des projets
