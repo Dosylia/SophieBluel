@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     filterObjects.addEventListener("click", function () {
         const objectsOnly = works.filter(function (works) {
-            return works.category.id === 1;
+            return works.category.id === 1; // Categorie = Objets
         });
         document.querySelector(".gallery").innerHTML = "";   
         generateWorks(objectsOnly);   
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     filterAppartements.addEventListener("click", function () {
         const appartementsOnly = works.filter(function (works) {
-            return works.category.id === 2;
+            return works.category.id === 2; // Categorie = Appartements
         });
         document.querySelector(".gallery").innerHTML = "";   
         generateWorks(appartementsOnly);   
@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     filterHotels.addEventListener("click", function () {
         const hotelOnly = works.filter(function (works) {
-            return works.category.id === 3;
+            return works.category.id === 3; // Categorie = Hôtels
         });
         document.querySelector(".gallery").innerHTML = "";   
         generateWorks(hotelOnly);   
@@ -318,7 +318,9 @@ document.addEventListener("DOMContentLoaded", async function() {
 
             //Ajouter les catégories dynamiquement
             const selectCategory = document.querySelector("#category");
-            selectCategory.innerHTML += generateCategoryOptions(categories);
+            if (selectCategory !== null) {
+                selectCategory.innerHTML += generateCategoryOptions(categories);
+            }
             
 
             const buttonForm = document.querySelector("#Submit");
