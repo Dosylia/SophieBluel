@@ -1,3 +1,1 @@
-- Fix suppresion projet
-- Menu catégorie hors ligne
-- fix ajout projet
+- Catégorie créer avec une boucle for, et pas un un objet set = problème?

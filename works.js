@@ -1,3 +1,4 @@
+'use strict';
 // URL de base pour l'api
 const baseUrl = "http://localhost:5678/api/"
 
@@ -79,7 +80,7 @@ function generateWorks(works)
         const captionElement = document.createElement("figcaption");
         captionElement.innerText = figure.title
 
-        divWorks.appendChild(workElement);
+        divWorks.appendChild(workElement); // DivWorks DOM ligne 15
         workElement.appendChild(imageElement);
         workElement.appendChild(captionElement)
     }
@@ -141,7 +142,7 @@ function submitForm()
 
     checkFormData(title, category) // Test si les champs ne sont pas vides
 
-    const formDataIsValid = checkFormData(title, category); 
+    const formDataIsValid = checkFormData(title, category);  // Si FALSE, pas d'appel API de fait.
     if (formDataIsValid === true) { // true = champs remplies, le formulaire envoyé
         let formData = new FormData();
         formData.append("image", file);
@@ -222,6 +223,24 @@ async function updateGalleryModal() {
     generateWorksModal(works)
 }
 
+function openModal(event) {
+    event.preventDefault();
+    formAddProjectDiv.style.display = "none";
+    modalEdit.style.visibility = "visible";
+    document.body.classList.add('modal-open');
+
+    fetch(`${baseUrl}works`)
+    .then(response => response.json())
+    .then(worksData => {
+        window.localStorage.setItem("works", JSON.stringify(worksData));
+        generateWorksModal(worksData);
+    })
+    .catch(error => {
+        console.error('Error fetching works data:', error);
+    });
+}
+
+
 
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -295,24 +314,16 @@ document.addEventListener("DOMContentLoaded", async function() {
             localStorage.removeItem('userToken');
         });
 
+        divButtonsFilter.style.display = "none";
+
     
         const buttonModifier = document.querySelector('.modifier');
         buttonModifier.style.display = "block"; //On montrer le bouton modifier si token
+        buttonModifier.addEventListener("click", openModal);
 
-        buttonModifier.addEventListener("click", async function(event) {
-            event.preventDefault()
-            formAddProjectDiv.style.display = "none";
-            modalEdit.style.visibility = "visible";
-            document.body.classList.add('modal-open');
-
-            const response = await fetch(`${baseUrl}works`);
-            const worksData = await response.json();
-
-            window.localStorage.setItem("works", JSON.stringify(worksData));
-
-            generateWorksModal(worksData);
-
-        });
+        const bannerEdit = document.querySelector('#edit-banner');
+        bannerEdit.style.display = "block"; //On montrer le bouton modifier si token        
+        bannerEdit.addEventListener("click", openModal);
 
 
         // Event bouton pour ajouter des projets

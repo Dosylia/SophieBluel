@@ -503,3 +503,13 @@ footer nav ul {
 	background-color: gray;
 }
 
+#edit-banner 
+{
+	display: none;
+	background-color: black;
+	color: white;
+	width: 100%;
+	text-align: center;
+	padding: 20px;
+	cursor: pointer;
+}
